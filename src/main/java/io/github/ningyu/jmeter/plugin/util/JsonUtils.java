@@ -46,8 +46,7 @@ public class JsonUtils {
 		try {
 			return gson.fromJson(json, classOfT);
 		} catch (JsonSyntaxException e) {
-			logger.error("json to class[" + classOfT.getName() + "] is error!",
-					e);
+			logger.error("json to class[" + classOfT.getName() + "] is error!", e);
 		}
 		return null;
 	}
@@ -56,8 +55,7 @@ public class JsonUtils {
 		try {
 			return gson.fromJson(json, type);
 		} catch (JsonSyntaxException e) {
-			logger.error("json to class[" + type.getClass().getName()
-					+ "] is error!", e);
+			logger.error("json to class[" + type.getClass().getName() + "] is error!", e);
 		}
 		return null;
 	}

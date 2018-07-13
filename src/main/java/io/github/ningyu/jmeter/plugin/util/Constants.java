@@ -40,7 +40,8 @@ public class Constants {
 	
 	public static final String ASYNC = "async";
 	public static final String SYMBOL = "://";
-	
+
+	//Base type default value
 	public static final int INT_DEFAULT = 0;
 	public static final double DOUBLE_DEFAULT = 0.0d;
 	public static final boolean BOOLEAN_DEFAULT = false;

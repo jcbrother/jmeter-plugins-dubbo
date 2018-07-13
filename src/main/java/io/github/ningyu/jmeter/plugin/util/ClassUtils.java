@@ -47,9 +47,9 @@ public class ClassUtils {
 	public static String[] getMethodParamType(String interfaceName,
 			String methodName) {
 		try {
-			// 创建类
+			// Class for name
 			Class<?> class1 = Class.forName(interfaceName);
-			// 获取所有的公共的方法
+			// get all public method
 			Method[] methods = class1.getMethods();
 			for (Method method : methods) {
 				if (method.getName().equals(methodName)) {
@@ -212,7 +212,7 @@ public class ClassUtils {
 						paramterTypeList.add(arg.getParamType());
 						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), clazz));
 					} catch (ClassNotFoundException e) {
-						//不是jdk或者lib下的类，使用通用map格式反序列化值
+						//Classes that do not exist under JDK lib are deserialized using a generic map
 						paramterTypeList.add(arg.getParamType());
 						parameterValuesList.add(isBlank(arg.getParamValue()) ? null : JsonUtils.formJson(arg.getParamValue(), new TypeToken<HashMap<String,Object>>() {}.getType()));
 					}

@@ -50,11 +50,6 @@ import com.alibaba.dubbo.rpc.service.GenericService;
 public class DubboSample extends AbstractSampler {
     
     private static final Logger log = LoggingManager.getLoggerForClass();
-
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = -6794913295411458705L;
     
     public static String FIELD_DUBBO_REGISTRY_PROTOCOL = "FIELD_DUBBO_REGISTRY_PROTOCOL";
@@ -323,11 +318,11 @@ public class DubboSample extends AbstractSampler {
         SampleResult res = new SampleResult();
         res.setSampleLabel(getName());
         res.sampleStart();
-        //构造请求数据
+        // build sample data
         res.setSamplerData(getSampleData());
-        //调用dubbo
+        // invoke dubbo rpc
         res.setResponseData(JsonUtils.toJson(callDubbo(res)));
-        //构造响应数据
+        // build response data
         res.setDataType(SampleResult.TEXT);
         res.setResponseCodeOK();
         res.setResponseMessageOK();
@@ -545,7 +540,7 @@ public class DubboSample extends AbstractSampler {
             res.setSuccessful(false);
             return Response.createResponse(ErrorCode.UNKNOWN_EXCEPTION, e);
         } finally {
-        	//TODO 不能在sample结束时destroy
+        	//We can't destroy it at the end of sample
 //            if (registry != null) {
 //                registry.destroyAll();
 //            }
