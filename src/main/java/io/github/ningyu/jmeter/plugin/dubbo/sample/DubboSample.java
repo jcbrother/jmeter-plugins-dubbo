@@ -25,6 +25,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.ningyu.jmeter.plugin.util.Response;
+import io.github.ningyu.jmeter.plugin.util.RpcExceptionHandler;
 import org.apache.jmeter.samplers.AbstractSampler;
 import org.apache.jmeter.samplers.Entry;
 import org.apache.jmeter.samplers.SampleResult;
@@ -39,6 +41,7 @@ import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import com.alibaba.dubbo.config.utils.ReferenceConfigCache.KeyGenerator;
+import com.alibaba.dubbo.rpc.RpcException;
 import com.alibaba.dubbo.rpc.service.GenericService;
 
 /**
@@ -369,7 +372,7 @@ public class DubboSample extends AbstractSampler {
         String address = getAddress();
         if (StringUtils.isBlank(address)) {
             res.setSuccessful(false);
-            return ErrorCode.MISS_ADDRESS.getMessage();
+            return Response.createResponse(ErrorCode.MISS_ADDRESS);
         }
         // get rpc protocol
         String rpcProtocol = getRpcProtocol().replaceAll("://", "");
@@ -415,7 +418,7 @@ public class DubboSample extends AbstractSampler {
 		    String interfaceName = getInterface();
 		    if (StringUtils.isBlank(interfaceName)) {
                 res.setSuccessful(false);
-                return ErrorCode.MISS_INTERFACE.getMessage();
+                return Response.createResponse(ErrorCode.MISS_INTERFACE);
             }
             reference.setInterface(interfaceName);
 
@@ -427,7 +430,7 @@ public class DubboSample extends AbstractSampler {
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
-                return ErrorCode.RETRIES_ERROR.getMessage();
+                return Response.createResponse(ErrorCode.RETRIES_ERROR);
             }
             if (retries != null) {
                 reference.setRetries(retries);
@@ -453,7 +456,7 @@ public class DubboSample extends AbstractSampler {
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
-                return ErrorCode.TIMEOUT_ERROR.getMessage();
+                return Response.createResponse(ErrorCode.TIMEOUT_ERROR);
             }
             if (timeout != null) {
                 reference.setTimeout(timeout);
@@ -473,7 +476,7 @@ public class DubboSample extends AbstractSampler {
                 }
             } catch (NumberFormatException e) {
                 res.setSuccessful(false);
-                return ErrorCode.CONNECTIONS_ERROR.getMessage();
+                return Response.createResponse(ErrorCode.CONNECTIONS_ERROR);
             }
             if (connections != null) {
                 reference.setConnections(connections);
@@ -497,7 +500,7 @@ public class DubboSample extends AbstractSampler {
             String methodName = getMethod();
             if (StringUtils.isBlank(methodName)) {
                 res.setSuccessful(false);
-                return ErrorCode.MISS_METHOD.getMessage();
+                return Response.createResponse(ErrorCode.MISS_METHOD);
             }
             
             // The registry's address is to generate the ReferenceConfigCache key
@@ -509,7 +512,7 @@ public class DubboSample extends AbstractSampler {
             GenericService genericService = (GenericService) cache.get(reference);
             if (genericService == null) {
                 res.setSuccessful(false);
-                return MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), interfaceName);
+                return Response.createResponse(ErrorCode.GENERIC_SERVICE_IS_NULL.getCode(), MessageFormat.format(ErrorCode.GENERIC_SERVICE_IS_NULL.getMessage(), interfaceName));
             }
             String[] parameterTypes = null;
             Object[] parameterValues = null;
@@ -525,19 +528,22 @@ public class DubboSample extends AbstractSampler {
 			try {
 				result = genericService.$invoke(methodName, parameterTypes, parameterValues);
 				res.setSuccessful(true);
+				// return rpc result
+                return result;
 			} catch (Exception e) {
-				log.error("RpcException：", e);
-				//TODO
-				//当接口返回异常时，sample标识为successful，通过响应内容做断言来判断是否标识sample错误，因为sample的错误会统计到用例的error百分比内。
-				//比如接口有一些校验性质的异常，不代表这个操作是错误的，这样就可以灵活的判断，不至于正常的校验返回导致测试用例error百分比的不真实
-				res.setSuccessful(true);
-				result = e;
+				log.error("Exception：", e);
+				res.setSuccessful(false);
+				if (e instanceof RpcException) {
+                    // Returns Response<RpcException> when an error occurs
+                    return RpcExceptionHandler.handle((RpcException) e);
+                }
+                return Response.createResponse(ErrorCode.UNKNOWN_EXCEPTION, e);
 			}
-            return result;
         } catch (Exception e) {
+            // Returns Response<Exception> when an error occurs
             log.error("UnknownException：", e);
             res.setSuccessful(false);
-            return e;
+            return Response.createResponse(ErrorCode.UNKNOWN_EXCEPTION, e);
         } finally {
         	//TODO 不能在sample结束时destroy
 //            if (registry != null) {

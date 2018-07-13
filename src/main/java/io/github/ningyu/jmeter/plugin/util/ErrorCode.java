@@ -5,10 +5,7 @@
 package io.github.ningyu.jmeter.plugin.util;
 
 /**
- * <功能描述>
- *
- * @author ningyu
- * @date 2018/7/11 18:03
+ * ErrorCode
  */
 public enum ErrorCode {
 
@@ -19,6 +16,12 @@ public enum ErrorCode {
     GENERIC_SERVICE_IS_NULL("GENERIC_SERVICE_IS_NULL","Not found exported service: {0}, may be version or group mismatch!"),
     MISS_METHOD("MISS_METHOD","Method is empty!"),
     MISS_ADDRESS("MISS_ADDRESS","Address is empty!"),
+    UNKNOWN_EXCEPTION("UNKNOWN_EXCEPTION","UnknownException!"),
+    NETWORK_EXCEPTION("NETWORK_EXCEPTION","NetworkException!"),
+    TIMEOUT_EXCEPTION("TIMEOUT_EXCEPTION","TimeoutException!"),
+    BIZ_EXCEPTION("BIZ_EXCEPTION","BizException!"),
+    FORBIDDEN_EXCEPTION("FORBIDDEN_EXCEPTION","ForbiddenException!"),
+    SERIALIZATION_EXCEPTION("SERIALIZATION_EXCEPTION","SerializationException!"),
     ;
 
     String code;
