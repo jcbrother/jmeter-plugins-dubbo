@@ -14,7 +14,9 @@ JMeter version: 3.0+
 
 # User Guide
 
-user guide ([English](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/user-guide), [Chinese](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/%E7%94%A8%E6%88%B7%E6%8C%87%E5%8D%97)) 
+user guide ([English](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/user-guide), [Chinese](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/%E7%94%A8%E6%88%B7%E6%8C%87%E5%8D%97))
+
+Got question to ask? Check the [FAQ](https://github.com/dubbo/jmeter-plugins-dubbo/wiki/FAQ) first! 
 
 # Changelog
 
